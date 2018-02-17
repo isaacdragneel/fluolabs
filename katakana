@@ -1,20 +1,48 @@
+#sketch.py 
+from symbol import Symbol
+
+symbolSize = 60
+
 def setup():
-    global ch
+    global sym
     size(800, 800)
+    
     msfont = loadFont("data/MS-Gothic-48.vlw")
-    textFont(msfont,60)
-    ch = 0x30A0 + random(96)
-    
-   
-    
+    textFont(msfont, symbolSize)
+    sym = Symbol(width/2, 0, 4)
+    pause = False
+        
 def draw():
+    global sym
     background(0)
-    fill(0,255,70)
-    text(unichr(ch),width/2,height/2)
+    sym.display()
+ 
+ 
+ 
+ class Symbol():
+    def __init__(self, x, y, speed):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.setSymbol()
+        
+    def setSymbol(self):
+        self.value =  unichr(0x30A0 + int(random(95)))
     
-def keyPressed():
-    global ch  
-    print("hello")
-    ch = 0x30A0 + random(96)
-   
+    def display(self):
+        fill(0, 255, 70)
+        text(self.value, self.x, self.y)
+        
+        if (frameCount % 10 == 0):
+            self.setSymbol()
+            
+        self.update()
+
+    def update(self):
+        if (self.y >= height):
+           self.y = 0
+        else:
+            self.y += self.speed
+        
+         
         
