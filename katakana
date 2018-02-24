@@ -1,48 +1,84 @@
 #sketch.py 
-from symbol import Symbol
+from stream import Stream
 
-symbolSize = 60
-
+symbolSize = 20
+streams = []
 def setup():
-    global sym
+    global strm
     size(800, 800)
     
     msfont = loadFont("data/MS-Gothic-48.vlw")
     textFont(msfont, symbolSize)
-    sym = Symbol(width/2, 0, 4)
-    pause = False
-        
+    
+    x = 0
+    i = 0
+    while(i <= (width / symbolSize)):
+        st = Stream(symbolSize)
+        st.makeSymbols(x, random(-2000, 0));
+        streams.append(st);
+        x += symbolSize
+        i += 1
+
 def draw():
-    global sym
     background(0)
-    sym.display()
+    for i in range(len(streams)):
+        streams[i].display()
+
  
  
- 
- class Symbol():
+ #stream.py 
+from symbol import Symbol
+
+class Stream():
+    def __init__(self, symbolSize):
+        self.symbols = []
+        self.totalSymbols = int(random(5, 25))
+        self.speed = int(random(5, 20))
+        self.symbolSize = symbolSize
+        
+    def makeSymbols(self, x, y):
+
+
+        for i in range(self.totalSymbols):
+            sym = Symbol(x, y, self.speed)
+            self.symbols.append(sym)
+            y = y - self.symbolSize
+            
+    def display(self):
+        for i in range(self.totalSymbols):
+            sym = self.symbols[i]
+            if (i == 0):
+                fill(255)
+            else:
+                fill(0, 255, 70)
+            text(sym.value, sym.x, sym.y)
+            sym.update()
+            
+            
+            #symbol.py
+class Symbol():
     def __init__(self, x, y, speed):
         self.x = x
         self.y = y
         self.speed = speed
-        self.setSymbol()
+        self.value = unichr(0x30A0 + round(random(0, 66)))
+        self.switchInterval = round(random(2, 25))
         
-    def setSymbol(self):
-        self.value =  unichr(0x30A0 + int(random(95)))
-    
+        
+    def setRandomSymbol(self):
+        self.value = unichr(0x30A0 + round(random(0, 66)))
+        
     def display(self):
         fill(0, 255, 70)
         text(self.value, self.x, self.y)
         
-        if (frameCount % 10 == 0):
-            self.setSymbol()
-            
-        self.update()
-
     def update(self):
+        if (frameCount % self.switchInterval == 0):
+            self.setRandomSymbol()
+        
         if (self.y >= height):
-           self.y = 0
+            self.y = 0
         else:
             self.y += self.speed
-        
-         
-        
+            
+    
